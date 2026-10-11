@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>STOREMASTER — Dashboard Central V8.1</title>
+<style>
+:root{--gold:#c9a227;--gold2:#f0cf62;--black:#111;--bg:#f4f4f1;--card:#fff;--muted:#707070;--border:#e5e5e5;--danger:#c0392b;--ok:#16824b;--warn:#b87900}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:var(--bg);color:#171717}.app{display:flex;min-height:100vh}.side{width:260px;background:#111;color:#fff;position:fixed;inset:0 auto 0 0;padding:20px 14px;z-index:10}.brand{padding:12px 14px 25px;border-bottom:1px solid #333;margin-bottom:16px}.brand h1{font-size:22px;margin:0;color:var(--gold2)}.brand small{color:#aaa}.nav button{width:100%;background:transparent;border:0;color:#ddd;text-align:left;padding:13px 14px;border-radius:10px;margin:3px 0;font-size:15px;cursor:pointer}.nav button:hover,.nav button.active{background:#272727;color:var(--gold2)}.sidefoot{position:absolute;bottom:18px;left:14px;right:14px;color:#888;font-size:12px}.main{margin-left:260px;width:calc(100% - 260px);padding:26px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:10px}.top h2{margin:0;font-size:26px}.top p{color:var(--muted);margin:6px 0 0}.btn{border:0;border-radius:9px;padding:11px 15px;cursor:pointer;font-weight:700}.primary{background:var(--black);color:var(--gold2)}.gold{background:var(--gold);color:#111}.light{background:#eee;color:#222}.danger{background:#ffe8e6;color:var(--danger)}.ok{background:#e6f7ed;color:var(--ok)}.btn:disabled{opacity:.55;cursor:not-allowed}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.stat{background:var(--card);padding:20px;border-radius:14px;border:1px solid var(--border);box-shadow:0 2px 8px #00000008}.stat .n{font-size:28px;font-weight:800;margin-top:10px}.stat .l{color:var(--muted);font-size:13px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}.card h3{margin:0 0 16px}.hidden{display:none!important}.toolbar{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}.search{padding:11px 12px;border:1px solid var(--border);border-radius:9px;min-width:240px}table{width:100%;border-collapse:collapse}th,td{padding:12px 10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px}th{color:#666;font-size:12px;text-transform:uppercase}.badge{padding:5px 9px;border-radius:99px;font-size:12px;font-weight:700}.activeB{background:#e6f7ed;color:var(--ok)}.pendingB{background:#fff4d7;color:var(--warn)}.suspendedB{background:#ffe8e6;color:var(--danger)}.actions{display:flex;gap:6px;flex-wrap:wrap}
+.expiredB{background:#ffe8e6;color:var(--danger)}
+.expirySoonB{background:#fff4d7;color:var(--warn)}
+.expiryInfo{font-size:12px;color:var(--muted);margin-top:6px}
+.reactivateBox{margin-top:14px;padding:14px;border:1px solid #ead79a;background:#fff9df;border-radius:10px}
+.reactivateBox .row{display:flex;gap:9px;align-items:end;flex-wrap:wrap}
+.reactivateBox input{min-width:170px}.mini{padding:7px 9px;border:0;border-radius:7px;cursor:pointer;background:#eee}.templates{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.template{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}.preview{height:125px;background:linear-gradient(135deg,#161616,#444);display:flex;align-items:center;justify-content:center;color:var(--gold2);font-size:26px;font-weight:bold}.template .body{padding:16px}.template h3{margin:0 0 7px}.template p{color:var(--muted);font-size:13px}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.show{display:flex}.dialog{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:22px}.dialog h2{margin-top:0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:13px;font-weight:700}input,select,textarea{padding:11px;border:1px solid #ddd;border-radius:9px;font:inherit}textarea{min-height:80px}.modalfoot{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.note{font-size:13px;color:var(--muted);line-height:1.5}.empty{color:#888;padding:25px;text-align:center}.progress{display:none;margin:16px 0;padding:14px;border:1px solid #ead79a;background:#fff9df;border-radius:10px}.progress.show{display:block}.progress li{margin:7px 0}.statusline{padding:12px;border-radius:10px;background:#f6f6f6;margin:8px 0}.code{font-family:monospace;background:#f3f3f3;padding:8px;border-radius:7px;word-break:break-all}.links a{display:inline-block;margin:5px 8px 0 0}.connection{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.dot{width:10px;height:10px;border-radius:50%;background:#bbb}.dot.on{background:var(--ok)}.dot.off{background:var(--danger)}@media(max-width:900px){.side{width:70px;padding:15px 8px}.brand h1,.brand small,.nav span,.sidefoot{display:none}.nav button{text-align:center}.main{margin-left:70px;width:calc(100% - 70px);padding:16px}.grid{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}@media(max-width:550px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.main{padding:12px}.search{min-width:100%;width:100%}.hideMob{display:none}}
+</style>
+
+<style id="share-card-css">
+.sharePage{min-height:100vh;background:#f4f4f1;padding:35px;display:flex;align-items:flex-start;justify-content:center}.shareWrap{width:min(900px,100%)}.shareBrand{font-size:30px;font-weight:800;margin:0 0 22px;color:#111}.shareCard{background:#fff;border:1px solid #e5e5e5;border-radius:20px;padding:28px;box-shadow:0 8px 30px #00000012}.shareCard h2{margin:0 0 20px}.shareRow{padding:11px 0;border-bottom:1px solid #eee;font-size:16px}.shareRow:last-child{border-bottom:0}.shareRow b{display:inline-block;min-width:180px}.shareLink{color:#1a237e;text-decoration:underline;word-break:break-all}.shareSecret{margin-top:18px;background:#201a0b;border-radius:15px;padding:16px;color:#f0cf62}.shareSecret b{display:block;color:#ddd;font-size:13px;margin-bottom:7px}.shareSecret code{font-size:24px;letter-spacing:2px;font-weight:800}.shareFoot{margin-top:16px;color:#777;font-size:13px}@media(max-width:600px){.sharePage{padding:15px}.shareCard{padding:18px}.shareRow b{display:block;min-width:0;margin-bottom:4px}}
+</style>
+<style id="premium-live-css">
+.createLive{position:fixed;inset:0;background:rgba(7,10,16,.76);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;z-index:1000}.createLive.show{display:flex}.liveBox{width:min(760px,100%);background:linear-gradient(180deg,#111722,#0b0f17);color:#fff;border:1px solid rgba(240,207,98,.35);border-radius:24px;box-shadow:0 30px 90px rgba(0,0,0,.45);overflow:hidden}.liveHead{padding:22px 24px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;align-items:center}.liveOrb{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#f0cf62,#c9a227);display:grid;place-items:center;font-size:23px}.liveTitle{font-size:20px;font-weight:800}.liveSub{font-size:13px;color:#aab3c2;margin-top:4px}.liveBody{padding:22px 24px}.liveSteps{display:grid;gap:10px}.liveStep{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);color:#8e98a8}.liveStep .ico{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#222a37;flex:0 0 auto}.liveStep.active{color:#fff;border-color:rgba(240,207,98,.35);background:rgba(201,162,39,.10)}.liveStep.done{color:#dff8e8;border-color:rgba(22,130,75,.35);background:rgba(22,130,75,.10)}.liveStep.done .ico{background:#16824b;color:#fff}.liveStep.fail{color:#ffd7d2;border-color:rgba(192,57,43,.4);background:rgba(192,57,43,.12)}.liveTimer{margin-top:16px;color:#aab3c2;font-size:12px;display:flex;justify-content:space-between}.liveResult{display:none;margin-top:18px;padding:16px;border-radius:16px;background:rgba(22,130,75,.10);border:1px solid rgba(22,130,75,.38)}.liveResult.show{display:block}.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.resultItem,.secretBox{background:rgba(255,255,255,.06);border-radius:12px;padding:11px}.resultItem b,.secretBox b{display:block;font-size:11px;color:#aab3c2;margin-bottom:5px}.resultValue{word-break:break-word}.secretBox{grid-column:1/-1;border:1px solid rgba(240,207,98,.45);background:#201a0b}.secretBox code{font-size:19px;letter-spacing:2px;color:#f0cf62;font-weight:800}.liveFoot{padding:16px 24px 22px;text-align:right}.liveClose{display:none}.liveClose.show{display:inline-block}@media(max-width:600px){.resultGrid{grid-template-columns:1fr}.liveHead,.liveBody,.liveFoot{padding-left:16px;padding-right:16px}}
+</style>
+
+<style id="dashboard-password-gate">
+body:not(.dashboard-authenticated) .app{display:none!important}
+.passwordGate{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at top right,#3a3218 0,#151515 48%,#090909 100%);font-family:Arial,Tahoma,sans-serif}
+.passwordGate.hidden{display:none!important}
+.passwordPanel{width:min(420px,100%);padding:30px 25px;background:#fff;border:1px solid #e6d7a0;border-radius:20px;box-shadow:0 24px 70px #0008;text-align:center}
+.passwordMark{width:62px;height:62px;margin:0 auto 15px;display:grid;place-items:center;border-radius:18px;background:#171717;color:#f0cf62;font-size:28px}
+.passwordPanel h2{margin:0 0 8px;color:#171717;font-size:24px}
+.passwordPanel p{margin:0 0 22px;color:#707070;font-size:14px;line-height:1.6}
+.passwordPanel input{width:100%;padding:14px;border:1px solid #d9d9d9;border-radius:10px;font-size:18px;text-align:center;letter-spacing:4px;outline:none}
+.passwordPanel input:focus{border-color:#c9a227;box-shadow:0 0 0 3px #c9a22725}
+.passwordSubmit{width:100%;margin-top:13px;padding:13px;border:0;border-radius:10px;background:#171717;color:#f0cf62;font-size:15px;font-weight:800;cursor:pointer}
+.passwordError{min-height:20px;margin-top:12px;color:#c0392b;font-size:13px}
+</style>
+
+</head>
+<body>
+
+<div class="passwordGate" id="passwordGate">
+  <form class="passwordPanel" id="dashboardPasswordForm">
+    <div class="passwordMark">🔐</div>
+    <h2>STOREMASTER</h2>
+    <p>أدخل الرقم السري للولوج إلى لوحة التحكم</p>
+    <input id="dashboardPassword" type="password" inputmode="numeric" autocomplete="current-password" placeholder="الرقم السري" aria-label="الرقم السري" required autofocus>
+    <button class="passwordSubmit" type="submit">دخول إلى لوحة التحكم</button>
+    <div class="passwordError" id="dashboardPasswordError" role="alert"></div>
+  </form>
+</div>
+
+<div class="app">
+<aside class="side">
+ <div class="brand"><h1>STOREMASTER</h1><small>Administration centrale • V8.1</small></div>
+ <nav class="nav">
+  <button class="active" data-page="home">🏠 <span>Accueil</span></button>
+  <button data-page="clients">👥 <span>Clients</span></button>
+  <button data-page="stores">🏪 <span>Boutiques</span></button>
+  <button data-page="templates">🎨 <span>Templates</span></button>
+  <button data-page="create">➕ <span>Créer une boutique</span></button>
+  <button data-page="settings">⚙️ <span>Paramètres</span></button>
+ </nav>
+ <div class="sidefoot">Worker V8.1 • Cloudflare Pages</div>
+</aside>
+<main class="main">
+<section id="home" class="page">
+ <div class="top"><div><h2>Bonjour 👋</h2><p>Création automatique GitHub + Cloudflare Pages.</p></div><button class="btn gold" onclick="openCreate()">➕ Nouvelle boutique</button></div>
+ <div class="grid"><div class="stat"><div class="l">CLIENTS</div><div class="n" id="statClients">0</div></div><div class="stat"><div class="l">BOUTIQUES</div><div class="n" id="statStores">0</div></div><div class="stat"><div class="l">ACTIVES</div><div class="n" id="statActive">0</div></div><div class="stat"><div class="l">CONNEXION WORKER</div><div class="n" id="statWorker">—</div></div></div>
+ <div class="card" style="margin-top:18px"><h3>Dernières boutiques</h3><div id="recentStores"></div></div>
+</section>
+<section id="clients" class="page hidden"><div class="top"><div><h2>👥 Clients</h2><p>Gestion des clients.</p></div><button class="btn gold" onclick="openClient()">➕ Ajouter un client</button></div><div class="card"><div class="toolbar"><input class="search" placeholder="Rechercher..." oninput="renderClients(this.value)"></div><div id="clientsTable"></div></div></section>
+<section id="stores" class="page hidden"><div class="top"><div><h2>🏪 Boutiques</h2><p>Chaque boutique possède son Repository et son projet Cloudflare.</p></div><button class="btn gold" onclick="openCreate()">➕ Créer</button></div><div class="card"><div class="toolbar"><input class="search" placeholder="Rechercher..." oninput="renderStores(this.value)"></div><div id="storesTable"></div></div></section>
+<section id="templates" class="page hidden"><div class="top"><div><h2>🎨 Templates</h2><p>Templates configurés dans le Worker V8.1.</p></div></div><div class="templates" id="templatesGrid"></div></section>
+<section id="create" class="page hidden">
+ <div class="top"><div><h2>➕ Création automatique d'une boutique</h2><p>Une seule action : le Worker crée GitHub, copie le template et connecte Cloudflare Pages.</p></div></div>
+ <div class="card"><form id="createForm"><div class="formgrid">
+  <div class="field"><label>Client</label><select id="cClient" required></select></div>
+  <div class="field"><label>Nom de la boutique (utilisé aussi comme nom du Repository)</label><input id="cStore" required placeholder="Ex: Ahmed Fashion"></div>
+  <div class="field"><label>Template</label><select id="cTemplate"><option value="template1">dawn-dz</option><option value="template2">ShopLive</option><option value="template3">hassoun</option></select></div>
+  <div class="field"><label>نوع التفعيل</label><select id="cPlan" required onchange="syncCreateSubscriptionDates()"><option value="trial" selected>🎁 شهر تجريبي مجاني — 0 دج</option><option value="3m">3 أشهر — 3000 دج</option><option value="6m">6 أشهر — 5000 دج</option><option value="12m">12 شهرًا — 9000 دج</option></select></div>
+  <div class="field"><label>مبلغ الاشتراك</label><input id="cPlanPrice" value="5000 دج" readonly></div>
+  <div class="field"><label>تاريخ التفعيل</label><input id="cActivation" type="date" required onchange="syncCreateSubscriptionDates()"></div>
+  <div class="field"><label>تاريخ انتهاء الصلاحية (يُحسب تلقائيًا)</label><input id="cExpiration" type="date" readonly required></div>
+  <div class="field full"><p class="note">سيُحفظ العرض وتاريخ التفعيل والانتهاء في ترخيص المتجر. يمكنك تعديل تاريخ التفعيل قبل الإنشاء إذا كان الاتفاق مع الزبون يبدأ في تاريخ آخر.</p></div>
+ </div><div class="modalfoot"><button type="submit" class="btn primary" id="createBtn">🚀 Créer et déployer automatiquement</button></div></form>
+ <div class="progress" id="progress"><b>⏳ Création en cours…</b><ol><li>Validation</li><li>Création Repository GitHub</li><li>Copie du Template</li><li>Création Cloudflare Pages</li><li>Connexion et déploiement</li></ol><div class="note">Veuillez attendre la réponse finale du Worker.</div></div></div>
+</section>
+<section id="settings" class="page hidden">
+ <div class="top"><div><h2>⚙️ Paramètres</h2><p>Configuration du Dashboard central.</p></div></div>
+ <div class="card"><h3>🔐 Connexion au Worker</h3><div class="formgrid"><div class="field full"><label>URL du Worker</label><input id="workerUrl" placeholder="https://votre-worker.workers.dev"></div><div class="field full"><label>MASTER_API_KEY</label><input id="masterKey" type="password" placeholder="Clé administrateur"></div></div><div class="modalfoot"><button class="btn primary" onclick="saveSettings()">💾 Enregistrer</button><button class="btn gold" onclick="testWorker()">🔌 Tester la connexion</button></div><div class="statusline connection"><span class="dot" id="connDot"></span><span id="connText">Non testé</span></div><p class="note">La clé est utilisée uniquement pour communiquer avec votre Worker. Elle n'est jamais envoyée à GitHub ou Cloudflare directement.</p></div>
+ <div class="card"><h3>💾 Données locales</h3><button class="btn light" onclick="exportData()">⬇️ Exporter</button> <button class="btn danger" onclick="resetData()">🗑️ Réinitialiser</button></div>
+</section>
+</main></div>
+
+<div class="modal" id="clientModal"><div class="dialog"><h2 id="clientModalTitle">Nouveau client</h2><form id="clientForm"><input type="hidden" id="clientId"><div class="formgrid"><div class="field"><label>Nom complet</label><input id="clientName" required></div><div class="field"><label>Email</label><input id="clientEmail" type="email"></div><div class="field"><label>Téléphone</label><input id="clientPhone"></div><div class="field"><label>Statut</label><select id="clientStatus"><option>Active</option><option>Suspended</option></select></div></div><div class="modalfoot"><button type="button" class="btn light" onclick="closeModal('clientModal')">Annuler</button><button class="btn primary">Enregistrer</button></div></form></div></div>
+<div class="modal" id="storeModal"><div class="dialog"><h2 id="storeTitle">Boutique</h2><div id="storeDetails"></div><div class="modalfoot"><button class="btn light" onclick="closeModal('storeModal')">Fermer</button></div></div></div>
+
+<div class="createLive" id="createLive"><div class="liveBox"><div class="liveHead"><div class="liveOrb" id="liveOrb">🚀</div><div><div class="liveTitle" id="liveTitle">Création intelligente</div><div class="liveSub" id="liveSub">Préparation des opérations sécurisées…</div></div></div><div class="liveBody"><div class="liveSteps" id="liveSteps"></div><div class="liveTimer"><span id="liveState">Initialisation…</span><span id="liveTime">00:00</span></div><div class="liveResult" id="liveResult"></div></div><div class="liveFoot"><button class="btn gold liveClose" id="liveClose" onclick="closeLive()">✓ Terminer</button></div></div></div>
+
+<script>
+const TEMPLATES=[{id:'template1',name:'dawn-dz',repo:'dawn-dz'},{id:'template2',name:'ShopLive',repo:'shoplive'},{id:'template3',name:'hassoun',repo:'hassoun'}];
+let db=JSON.parse(localStorage.getItem('storemaster_v62_db')||'{"clients":[],"stores":[]}');
+const settings=JSON.parse(localStorage.getItem('storemaster_v62_settings')||'{}');
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem('storemaster_v62_db',JSON.stringify(db))}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function uid(p){return p+'-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+const SUBSCRIPTION_PLANS={
+  'trial':{label:'شهر تجريبي مجاني',days:30,months:0,price:0},
+  '3m':{label:'3 أشهر',months:3,price:3000},
+  '6m':{label:'6 أشهر',months:6,price:5000},
+  '12m':{label:'12 شهرًا',months:12,price:9000}
+};
+function todayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function addMonthsToISO(date,months){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return '';
+  const [y,m,d]=date.split('-').map(Number);
+  const targetMonth=(m-1)+Number(months), targetYear=y+Math.floor(targetMonth/12), monthIndex=((targetMonth%12)+12)%12;
+  const lastDay=new Date(Date.UTC(targetYear,monthIndex+1,0)).getUTCDate();
+  return new Date(Date.UTC(targetYear,monthIndex,Math.min(d,lastDay))).toISOString().slice(0,10);
+}
+function addDaysISO(date,days){const d=new Date(String(date)+'T00:00:00Z');if(!Number.isFinite(d.getTime()))return todayISO();d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10)}
+function syncCreateSubscriptionDates(){
+  const plan=SUBSCRIPTION_PLANS[$('cPlan')?.value]||SUBSCRIPTION_PLANS['6m'];
+  const activation=$('cActivation');
+  if(activation&&!activation.value)activation.value=todayISO();
+  if($('cPlanPrice'))$('cPlanPrice').value=plan.price.toLocaleString('fr-DZ')+' دج';
+  if($('cExpiration'))$('cExpiration').value=plan.days?addDaysISO(activation?.value||todayISO(),plan.days):addMonthsToISO(activation?.value||todayISO(),plan.months);
+}
+function daysUntil(date){
+  if(!date)return null;
+  const target=new Date(date+'T00:00:00');const today=new Date();today.setHours(0,0,0,0);target.setHours(0,0,0,0);
+  return Math.round((target-today)/86400000);
+}
+function effectiveStoreStatus(s){
+  if(s.status==='Suspended')return 'Suspended';
+  const d=daysUntil(s.expirationDate);
+  if(d!==null && d<0)return 'Expired';
+  return s.status||'Active';
+}
+function statusBadge(s){
+  const st=effectiveStoreStatus(s);
+  let c=st==='Active'?'activeB':st==='Pending'?'pendingB':st==='Expired'?'expiredB':'suspendedB';
+  return `<span class="badge ${c}">${esc(st)}</span>`;
+}
+function expiryLabel(s){
+  if(!s.expirationDate)return '<span class="expiryInfo">Sans date d\'expiration</span>';
+  const d=daysUntil(s.expirationDate);
+  if(d<0)return `<span class="expiryInfo" style="color:var(--danger);font-weight:700">Expirée le ${esc(s.expirationDate)}</span>`;
+  if(d<=7)return `<span class="expiryInfo" style="color:var(--warn);font-weight:700">Expire dans ${d} jour${d>1?'s':''} • ${esc(s.expirationDate)}</span>`;
+  return `<span class="expiryInfo">Expire le ${esc(s.expirationDate)}</span>`;
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));renderAll()}
+function renderAll(){renderStats();renderClients();renderStores();renderTemplates();renderSelects()}
+function renderStats(){$('statClients').textContent=db.clients.length;$('statStores').textContent=db.stores.length;$('statActive').textContent=db.stores.filter(s=>effectiveStoreStatus(s)==='Active').length;let rs=[...db.stores].slice(-5).reverse();$('recentStores').innerHTML=rs.length?`<table><tr><th>Boutique</th><th>Statut</th><th>Cloudflare</th></tr>${rs.map(s=>`<tr><td>${esc(s.name)}</td><td>${statusBadge(s.status)}</td><td>${s.cloudflare?.url?`<a target="_blank" href="${esc(canonicalPagesUrl(s.cloudflare.url))}">Ouvrir</a>`:'—'}</td></tr>`).join('')}</table>`:'<div class="empty">Aucune boutique.</div>';$('statWorker').textContent=settings.workerUrl?'Configuré':'—'}
+function renderClients(q=''){q=q.toLowerCase();let a=db.clients.filter(c=>(c.name+c.email+c.phone).toLowerCase().includes(q));$('clientsTable').innerHTML=a.length?`<table><tr><th>Client</th><th>Email</th><th>Boutiques</th><th></th></tr>${a.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.email||'-')}</td><td>${db.stores.filter(s=>s.clientId===c.id).length}</td><td><button class="mini" onclick="editClient('${c.id}')">✏️</button></td></tr>`).join('')}</table>`:'<div class="empty">Aucun client.</div>'}
+function renderStores(q=''){q=q.toLowerCase();let a=db.stores.filter(s=>(s.name+s.repo+s.template).toLowerCase().includes(q));$('storesTable').innerHTML=a.length?`<table><tr><th>Boutique</th><th class="hideMob">Repository</th><th>Cloudflare</th><th>Expiration</th><th>Actions</th><th>Statut</th></tr>${a.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td class="hideMob">${esc(s.repo||'—')}</td><td>${s.cloudflare?.url?`<a target="_blank" href="${esc(canonicalPagesUrl(s.cloudflare.url))}">pages.dev</a>`:'—'}</td><td>${expiryLabel(s)}</td><td><div class="actions"><button class="mini" title="Créer et ouvrir le lien de partage" onclick="shareStore('${s.id}')">👁️</button><button class="mini" title="Vérifier Cloudflare" onclick="checkCloudflare('${s.id}')">☁️</button></div></td><td>${statusBadge(s)}</td></tr>`).join('')}</table>`:'<div class="empty">Aucune boutique.</div>'}
+function renderTemplates(){$('templatesGrid').innerHTML=TEMPLATES.map(t=>`<div class="template"><div class="preview">${t.name}</div><div class="body"><h3>${t.name}</h3><p>Template configuré dans Worker V8.1</p><button class="btn primary" onclick="selectTemplate('${t.id}')">Choisir</button></div></div>`).join('')}
+function renderSelects(){let cs=$('cClient');cs.innerHTML='<option value="">-- Choisir un client --</option>'+db.clients.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}
+function openClient(id=''){let c=db.clients.find(x=>x.id===id);$('clientModalTitle').textContent=c?'Modifier le client':'Nouveau client';$('clientId').value=c?.id||'';$('clientName').value=c?.name||'';$('clientEmail').value=c?.email||'';$('clientPhone').value=c?.phone||'';$('clientStatus').value=c?.status||'Active';$('clientModal').classList.add('show')}
+function editClient(id){openClient(id)}function closeModal(id){$(id).classList.remove('show')}
+$('clientForm').onsubmit=e=>{e.preventDefault();let id=$('clientId').value;if(id){Object.assign(db.clients.find(x=>x.id===id),{name:$('clientName').value,email:$('clientEmail').value,phone:$('clientPhone').value,status:$('clientStatus').value})}else db.clients.push({id:uid('CL'),name:$('clientName').value,email:$('clientEmail').value,phone:$('clientPhone').value,status:$('clientStatus').value});save();closeModal('clientModal');renderAll()}
+function openCreate(){showPage('create')}
+function normalizeRepo(v){return String(v||'').trim().toLowerCase().replace(/[^a-z0-9-_]/g,'-').replace(/-+/g,'-').replace(/^-+|-+$/g,'')}
+$('cStore').addEventListener('input',()=>{const normalized=normalizeRepo($('cStore').value);$('cStore').dataset.repository=normalized})
+$('cActivation').value=todayISO();syncCreateSubscriptionDates();$('cPlan').addEventListener('change',syncCreateSubscriptionDates);$('cActivation').addEventListener('change',syncCreateSubscriptionDates);
+async function api(path,body,method='POST'){if(!settings.workerUrl||!settings.masterKey)throw new Error('Configurez URL Worker et MASTER_API_KEY dans Paramètres.');let r=await fetch(settings.workerUrl.replace(/\/$/,'')+path,{method,headers:{'Content-Type':'application/json','X-Master-Key':settings.masterKey},body:method==='GET'?undefined:JSON.stringify(body||{})});let d;try{d=await r.json()}catch{throw new Error('Réponse Worker invalide')}if(!r.ok||d.success===false)throw new Error(d.error||d.details?.message||d.details||'Erreur Worker');return d}
+
+const LIVE_STEPS=[['🔎','Validation des données'],['🔐','Création de la licence sécurisée'],['🐙','Création du Repository GitHub'],['📦','Copie du Template'],['☁️','Création du projet Cloudflare Pages'],['🌐','Recherche du lien officiel'],['✨','Finalisation']];
+let liveTimerHandle=null,liveStart=0,liveStepIndex=-1;
+function canonicalPagesUrl(value){if(!value)return '';try{const u=new URL(value),h=u.hostname.toLowerCase();if(h.endsWith('.pages.dev')){const p=h.split('.');if(p.length>3)u.hostname=p.slice(-3).join('.')}return u.toString().replace(/\/$/,'')}catch{return String(value||'').trim()}}
+function openLive(){$('createLive').classList.add('show');$('liveClose').classList.remove('show');$('liveResult').classList.remove('show');$('liveOrb').textContent='🚀';$('liveSteps').innerHTML=LIVE_STEPS.map((s,i)=>`<div class="liveStep" id="liveStep${i}"><div class="ico">${s[0]}</div><div>${s[1]}</div></div>`).join('');liveStart=Date.now();liveStepIndex=-1;clearInterval(liveTimerHandle);liveTimerHandle=setInterval(()=>{let x=Math.floor((Date.now()-liveStart)/1000);$('liveTime').textContent=String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0')},250)}
+function setLiveStep(i,state='active',note=''){if(liveStepIndex>=0&&liveStepIndex!==i){let p=$('liveStep'+liveStepIndex);if(p&&!p.classList.contains('fail')){p.classList.remove('active');p.classList.add('done');p.querySelector('.ico').textContent='✓'}}let el=$('liveStep'+i);if(!el)return;if(state==='active'){el.classList.add('active');el.classList.remove('done','fail');$('liveState').textContent=note||LIVE_STEPS[i][1]+'…';liveStepIndex=i}else if(state==='done'){el.classList.remove('active');el.classList.add('done');el.querySelector('.ico').textContent='✓'}else if(state==='fail'){el.classList.remove('active');el.classList.add('fail');el.querySelector('.ico').textContent='!'}}
+function closeLive(){clearInterval(liveTimerHandle);$('createLive').classList.remove('show')}
+async function resolveOfficialCloudflare(project,fallback){let fb=canonicalPagesUrl(fallback);try{for(let i=0;i<6;i++){let d=await api('/api/cloudflare/status?project='+encodeURIComponent(project),null,'GET');let u=canonicalPagesUrl(d.url||'');if(u&&d.exists)return {url:u,data:d};await new Promise(r=>setTimeout(r,1200))}}catch(e){}return {url:fb,data:null}}
+$('createForm').onsubmit=async e=>{e.preventDefault();if(!$('cClient').value)return alert('Veuillez choisir un client.');let name=$('cStore').value.trim(),repo=normalizeRepo(name);if(!name||!repo)return alert('Veuillez saisir un nom de boutique valide pour créer le Repository.');$('createBtn').disabled=true;$('progress').classList.add('show');openLive();setLiveStep(0,'active');let n=0;let seq=setInterval(()=>{if(n<5){setLiveStep(n,'done');n++;setLiveStep(n,'active')}},900);try{const planId=$('cPlan').value,plan=SUBSCRIPTION_PLANS[$('cPlan').value],activationDate=$('cActivation').value||todayISO(),expirationDate=plan?.days?addDaysISO(activationDate,plan.days):addMonthsToISO(activationDate,plan?.months);if(!plan||!activationDate||!expirationDate)throw new Error('يرجى اختيار عرض وتاريخ تفعيل صحيحين.');$('cExpiration').value=expirationDate;let d=await api('/api/store/create',{client:(db.clients.find(c=>c.id===$('cClient').value)?.name||''),storeName:name,repository:repo,template:$('cTemplate').value,subscriptionPlan:planId,subscriptionPrice:plan.price,subscriptionType:planId==='trial'?'trial':'paid',trialUsed:planId==='trial',activationDate,expirationDate});clearInterval(seq);setLiveStep(5,'active','Vérification du lien Cloudflare officiel…');let r=await resolveOfficialCloudflare(d.cloudflare?.project||repo,d.cloudflare?.url||'');setLiveStep(5,'done');setLiveStep(6,'active');let cf=r.data||{};let s={id:uid('ST'),storeId:d.license?.storeId||null,clientId:$('cClient').value,name,template:d.store?.template||$('cTemplate').value,repo:d.github?.repository||repo,status:d.license?.status==='pending'?'Pending':'Active',subscriptionPlan:planId,subscriptionPrice:plan.price,subscriptionType:planId==='trial'?'trial':'paid',trialUsed:planId==='trial',activationDate,expirationDate,createdAt:new Date().toISOString(),adminPassword:d.identifiers?.adminPassword||'',github:d.github||{repositoryUrl:d.repositoryUrl},cloudflare:{project:cf.project||d.cloudflare?.projectName||d.cloudflare?.project||repo,projectName:cf.project||d.cloudflare?.projectName||d.cloudflare?.project||repo,url:canonicalPagesUrl(r.url||d.cloudflare?.url||''),created:!!d.cloudflare?.created,deploymentStatus:cf.status||(d.cloudflare?.error?'error':(d.cloudflare?.created?'created':'pending')),error:d.cloudflare?.error||null,subdomain:cf.subdomain||''}};db.stores.push(s);save();e.target.reset();$('progress').classList.remove('show');renderAll();setLiveStep(6,'done');clearInterval(liveTimerHandle);$('liveOrb').textContent='✓';$('liveTitle').textContent='Boutique créée avec succès';$('liveSub').textContent='Toutes les opérations ont été finalisées.';$('liveState').textContent='Processus terminé';$('liveResult').innerHTML=`<h3>✓ Informations de la boutique</h3><div class="resultGrid"><div class="resultItem"><b>BOUTIQUE</b><div class="resultValue">${esc(s.name)}</div></div><div class="resultItem"><b>REPOSITORY</b><div class="resultValue">${esc(s.repo)}</div></div><div class="resultItem"><b>PROJET CLOUDFLARE</b><div class="resultValue">${esc(s.cloudflare.project)}</div></div><div class="resultItem"><b>LIEN OFFICIEL</b><div class="resultValue">${s.cloudflare.url?`<a target="_blank" href="${esc(s.cloudflare.url)}">${esc(s.cloudflare.url)}</a>`:'En attente'}</div></div><div class="resultItem"><b>OFFRE</b><div class="resultValue">${esc(plan.label)} — ${plan.price.toLocaleString('fr-DZ')} دج</div></div><div class="resultItem"><b>ACTIVATION</b><div class="resultValue">${esc(activationDate)}</div></div><div class="resultItem"><b>EXPIRATION</b><div class="resultValue">${esc(expirationDate)}</div></div><div class="secretBox"><b>🔐 MOT DE PASSE ADMINISTRATEUR — 10 CARACTÈRES</b><code>${esc(s.adminPassword||'Non retourné')}</code></div></div>`;$('liveResult').classList.add('show');$('liveClose').classList.add('show')}catch(err){clearInterval(seq);$('progress').classList.remove('show');clearInterval(liveTimerHandle);if(liveStepIndex>=0)setLiveStep(liveStepIndex,'fail');$('liveOrb').textContent='!';$('liveTitle').textContent='Erreur de création';$('liveSub').textContent=err.message||String(err);$('liveResult').innerHTML='<h3 style="color:#ffd7d2">Erreur</h3><div>'+esc(err.message||String(err))+'</div>';$('liveResult').classList.add('show');$('liveClose').classList.add('show')}finally{$('createBtn').disabled=false}}
+
+function encodeSharePayload(obj){
+  const bytes=new TextEncoder().encode(JSON.stringify(obj));
+  let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeSharePayload(v){
+  try{let b64=v.replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';let bin=atob(b64),bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}catch{return null}
+}
+function shareStore(id){
+  const s=db.stores.find(x=>x.id===id);
+  if(!s)return;
+  const c=db.clients.find(x=>x.id===s.clientId);
+  const storeUrl=canonicalPagesUrl(s.cloudflare?.url||'');
+  const dashboardUrl=storeUrl?storeUrl.replace(/\/+$/,'')+'/adm':'';
+  const payload={name:s.name,client:c?.name||'-',template:s.template,repo:s.repo,url:storeUrl,dashboardUrl,project:s.cloudflare?.project||s.repo,deployment:s.cloudflare?.deploymentStatus||'—',created:(s.createdAt||'').slice(0,10)||'—',subscriptionPlan:s.subscriptionPlan||'',subscriptionPrice:s.subscriptionPrice||null,activationDate:s.activationDate||'',expiration:s.expirationDate||'Non définie',status:effectiveStoreStatus(s),adminPassword:s.adminPassword||'Non disponible'};
+  const base=location.href.split('?')[0].split('#')[0];
+  const link=base+'?storecard='+encodeSharePayload(payload);
+  if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
+  window.open(link,'_blank');
+}
+function renderSharedStore(payload){
+  if(!payload)return false;
+  document.body.innerHTML=`<div class="sharePage"><div class="shareWrap"><div class="shareBrand">🏪 ${esc(payload.name||'Boutique')}</div><div class="shareCard"><h2>Informations de la boutique</h2><div class="shareRow"><b>Client :</b> ${esc(payload.client||'-')}</div><div class="shareRow"><b>Template :</b> ${esc(payload.template||'-')}</div><div class="shareRow"><b>Repository :</b> ${esc(payload.repo||'-')}</div><div class="shareRow"><b>Site de la boutique :</b> ${payload.url?`<a class="shareLink" target="_blank" href="${esc(payload.url)}">${esc(payload.url)}</a>`:'—'}</div><div class="shareRow"><b>Site du tableau de bord :</b> ${payload.dashboardUrl?`<a class="shareLink" target="_blank" href="${esc(payload.dashboardUrl)}">${esc(payload.dashboardUrl)}</a>`:'—'}</div><div class="shareRow"><b>Projet :</b> ${esc(payload.project||'-')}</div><div class="shareRow"><b>Déploiement :</b> ${esc(payload.deployment||'—')}</div><div class="shareRow"><b>Date de création :</b> ${esc(payload.created||'—')}</div><div class="shareRow"><b>Date d'expiration :</b> ${esc(payload.expiration||'Non définie')}</div><div class="shareRow"><b>État :</b> ${statusBadge(payload.status||'Active')} ${payload.expiration&&payload.expiration!=='Non définie'?`<span style="color:#777;margin-left:8px">Expire le ${esc(payload.expiration)}</span>`:''}</div><div class="shareSecret"><b>🔐 MOT DE PASSE ADMINISTRATEUR — 10 CARACTÈRES</b><code>${esc(payload.adminPassword||'Non disponible')}</code></div></div><div class="shareFoot">Cette carte a été générée depuis STOREMASTER.</div></div></div>`;
+  return true;
+}
+function viewStore(id){
+  let s=db.stores.find(x=>x.id===id);if(!s)return;
+  let c=db.clients.find(x=>x.id===s.clientId),u=canonicalPagesUrl(s.cloudflare?.url||'');
+  const st=effectiveStoreStatus(s);
+  const today=todayISO();
+  const renewalStart=s.expirationDate && daysUntil(s.expirationDate)>=0 ? addDaysISO(s.expirationDate,1) : today;
+  const currentPlan=SUBSCRIPTION_PLANS[s.subscriptionPlan]||null;
+  $('storeTitle').textContent='🏪 '+s.name;
+  $('storeDetails').innerHTML=`<div class="card">
+  <b>Client :</b> ${esc(c?.name||'-')}<br>
+  <b>Template :</b> ${esc(s.template)}<br>
+  <b>Repository :</b> ${esc(s.repo)}<br>
+  ${u?`<a target="_blank" href="${esc(u)}">${esc(u)}</a><br>`:' '}
+  <b>Projet :</b> ${esc(s.cloudflare?.project||s.repo)}<br>
+  <b>Déploiement :</b> ${esc(s.cloudflare?.deploymentStatus||'—')}<br>
+  <b>Date de création :</b> ${esc((s.createdAt||'').slice(0,10)||'—')}<br>
+  <b>العرض الحالي :</b> ${esc(currentPlan?currentPlan.label+' — '+(s.subscriptionPrice||currentPlan.price).toLocaleString('fr-DZ')+' دج':'غير مسجل في البيانات المحلية')}<br>
+  <b>تاريخ التفعيل :</b> ${esc(s.activationDate||'—')}<br>
+  <b>Date d'expiration :</b> ${esc(s.expirationDate||'Non définie')}<br>
+  <b>État :</b> ${statusBadge(s)} ${expiryLabel(s)}
+  <div class="secretBox" style="margin-top:14px"><b>🔐 MOT DE PASSE ADMINISTRATEUR — 10 CARACTÈRES</b><code>${esc(s.adminPassword||'Non disponible')}</code></div>
+  </div>
+  <div class="reactivateBox"><b>🔄 تجديد أو تفعيل الاشتراك من STOREMASTER</b><p class="note">إذا كانت الصلاحية الحالية لا تزال سارية، يبدأ التجديد من اليوم التالي لتاريخ الانتهاء الحالي حتى لا تضيع المدة المتبقية. إذا انتهت الصلاحية، يبدأ الاشتراك من التاريخ المحدد أدناه.</p><div class="formgrid" style="margin-top:12px"><div class="field"><label>العرض الجديد</label><select id="reactivatePlan" onchange="syncRenewalDates()"><option value="3m" ${s.subscriptionPlan==='3m'?'selected':''}>3 أشهر — 3000 دج</option><option value="6m" ${(!s.subscriptionPlan||s.subscriptionPlan==='6m')?'selected':''}>6 أشهر — 5000 دج</option><option value="12m" ${s.subscriptionPlan==='12m'?'selected':''}>12 شهرًا — 9000 دج</option></select></div><div class="field"><label>تاريخ بدء الاشتراك الجديد</label><input id="reactivateActivation" type="date" value="${esc(renewalStart)}" onchange="syncRenewalDates()"></div><div class="field"><label>تاريخ الانتهاء المحسوب</label><input id="reactivateDate" type="date" readonly></div><div class="field"><label>السعر</label><input id="reactivatePrice" readonly></div></div><div class="modalfoot"><button class="btn gold" onclick="reactivateStore('${s.id}')">🔄 حفظ العرض وإعادة التفعيل</button></div></div>
+  <div class="modalfoot"><button class="btn gold" onclick="checkCloudflare('${s.id}')">☁️ Vérifier et corriger le lien</button></div>`;
+  $('storeModal').classList.add('show');
+  syncRenewalDates();
+}
+function syncRenewalDates(){
+  const plan=SUBSCRIPTION_PLANS[$('reactivatePlan')?.value]||SUBSCRIPTION_PLANS['6m'];
+  const activation=$('reactivateActivation')?.value||todayISO();
+  if($('reactivateDate'))$('reactivateDate').value=addMonthsToISO(activation,plan.months);
+  if($('reactivatePrice'))$('reactivatePrice').value=plan.price.toLocaleString('fr-DZ')+' دج';
+}
+async function reactivateStore(id){
+  const s=db.stores.find(x=>x.id===id);
+  const planId=$('reactivatePlan')?.value,plan=SUBSCRIPTION_PLANS[planId];
+  const activationDate=$('reactivateActivation')?.value;
+  const expirationDate=$('reactivateDate')?.value;
+  if(!s||!plan||!activationDate||!expirationDate){alert('يرجى اختيار العرض وتاريخ بدء صحيحين.');return;}
+  if(new Date(expirationDate+'T23:59:59.999Z')<=new Date())return alert('تاريخ انتهاء الصلاحية يجب أن يكون في المستقبل.');
+  try{
+    const result=await api('/api/store/reactivate',{storeId:s.storeId||undefined,repository:s.repo,storeName:s.name,subscriptionPlan:planId,subscriptionPrice:plan.price,activationDate,expirationDate});
+    s.storeId=result.license?.storeId||s.storeId||null;
+    s.status='Active';s.subscriptionPlan=planId;s.subscriptionPrice=plan.price;s.activationDate=activationDate;s.expirationDate=result.license?.expirationDate||expirationDate;s.reactivatedAt=new Date().toISOString();
+    save();renderAll();viewStore(id);
+    alert('تم حفظ العرض وتفعيل الاشتراك بنجاح.');
+  }catch(e){alert('تعذر إعادة التفعيل عبر Worker: '+e.message);}
+}
+async function checkCloudflare(id){let s=db.stores.find(x=>x.id===id);try{let d=await api('/api/cloudflare/status?project='+encodeURIComponent(s.cloudflare?.project||s.repo),null,'GET');s.cloudflare={...s.cloudflare,project:d.project||s.repo,projectName:d.project||s.repo,url:canonicalPagesUrl(d.url||s.cloudflare?.url||''),subdomain:d.subdomain||'',exists:!!d.exists,deploymentStatus:d.status||'unknown',productionBranch:d.productionBranch||'main'};save();renderAll();viewStore(id)}catch(e){alert('Erreur Cloudflare : '+e.message)}}
+function selectTemplate(id){openCreate();setTimeout(()=>$('cTemplate').value=id,30)}
+function saveSettings(){settings.workerUrl=$('workerUrl').value.trim().replace(/\/$/,'');settings.masterKey=$('masterKey').value.trim();localStorage.setItem('storemaster_v62_settings',JSON.stringify(settings));alert('Paramètres enregistrés.')}
+async function testWorker(){try{let url=$('workerUrl').value.trim().replace(/\/$/,'');if(!url)throw new Error('URL Worker manquante');let r=await fetch(url+'/health');let d=await r.json();if(!r.ok||d.success===false)throw new Error(d.error||'Worker indisponible');$('connDot').className='dot on';$('connText').textContent=`Connecté • ${d.service||'StoreMaster Worker'} • V${d.version||'8.1'} • ${d.status||'online'}`;settings.workerUrl=url;localStorage.setItem('storemaster_v62_settings',JSON.stringify(settings))}catch(e){$('connDot').className='dot off';$('connText').textContent='Erreur : '+e.message}}
+function exportData(){let b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='storemaster-V8.1-data.json';a.click();URL.revokeObjectURL(a.href)}
+function resetData(){if(confirm('Supprimer toutes les données locales ?')){db={clients:[],stores:[]};save();renderAll()}}
+$('workerUrl').value=settings.workerUrl||'';$('masterKey').value=settings.masterKey||'';
+const sharedParam=new URLSearchParams(location.search).get('storecard');
+if(!renderSharedStore(sharedParam?decodeSharePayload(sharedParam):null)) renderAll();
+</script>
+
+<script id="dashboard-password-script">
+(function(){
+  const form=document.getElementById('dashboardPasswordForm');
+  const field=document.getElementById('dashboardPassword');
+  const error=document.getElementById('dashboardPasswordError');
+  const gate=document.getElementById('passwordGate');
+  if(!form||!field||!gate)return;
+  form.addEventListener('submit',function(event){
+    event.preventDefault();
+    if(field.value==='12122012'){
+      document.body.classList.add('dashboard-authenticated');
+      gate.classList.add('hidden');
+      error.textContent='';
+      field.value='';
+    }else{
+      error.textContent='الرقم السري غير صحيح. حاول مرة أخرى.';
+      field.value='';
+      field.focus();
+    }
+  });
+})();
+</script>
+
+</body></html>
