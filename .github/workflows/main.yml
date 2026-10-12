@@ -1,0 +1,79 @@
+name: Build STOREMASTER APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Locate Android Gradle project
+        id: project
+        shell: bash
+        run: |
+          set -e
+
+          SETTINGS_FILE=$(find . -type f \
+            \( -name settings.gradle -o -name settings.gradle.kts \) \
+            -not -path '*/.gradle/*' \
+            -not -path '*/build/*' | head -n 1)
+
+          if [ -z "$SETTINGS_FILE" ]; then
+            echo "ERROR: Gradle settings file not found."
+            find . -maxdepth 5 -type f | sort
+            exit 1
+          fi
+
+          PROJECT_DIR=$(dirname "$SETTINGS_FILE")
+          echo "project_dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
+          echo "Gradle project: $PROJECT_DIR"
+          ls -la "$PROJECT_DIR"
+
+      - name: Check Android manifest
+        shell: bash
+        run: |
+          PROJECT_DIR="${{ steps.project.outputs.project_dir }}"
+
+          if [ ! -f "$PROJECT_DIR/app/src/main/AndroidManifest.xml" ]; then
+            echo "ERROR: AndroidManifest.xml is missing."
+            exit 1
+          fi
+
+          echo "AndroidManifest.xml found."
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Build debug APK
+        shell: bash
+        run: |
+          cd "${{ steps.project.outputs.project_dir }}"
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StoreMaster-APK
+          path: ${{ steps.project.outputs.project_dir }}/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
