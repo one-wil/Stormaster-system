@@ -1,0 +1,69 @@
+name: Build STOREMASTER APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Inspect Android project
+        shell: bash
+        run: |
+          set -eux
+
+          echo "Repository root:"
+          pwd
+
+          echo "Top-level files:"
+          ls -la
+
+          echo "Android project files:"
+          find storemaster-apk -maxdepth 5 -type f | sort
+
+          echo "Manifest in expected path:"
+          ls -la storemaster-apk/app/src/main/ || true
+
+          echo "All manifest files:"
+          find . -type f -iname "AndroidManifest.xml" \
+            -not -path '*/build/*' -print
+
+          echo "App Gradle configuration:"
+          cat storemaster-apk/app/build.gradle
+
+          echo "Git tracked manifest:"
+          git ls-files | grep -i 'AndroidManifest.xml' || true
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Build debug APK
+        working-directory: storemaster-apk
+        run: gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StoreMaster-APK
+          path: storemaster-apk/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
