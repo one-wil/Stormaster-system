@@ -24,41 +24,31 @@ jobs:
         shell: bash
         run: |
           set -e
-
-          SETTINGS_FILE=$(find . -type f \
-            \( -name settings.gradle -o -name settings.gradle.kts \) \
-            -not -path '*/.gradle/*' \
-            -not -path '*/build/*' | head -n 1)
-
+          SETTINGS_FILE="$(find . -type f \( -name settings.gradle -o -name settings.gradle.kts \) -not -path '*/.gradle/*' -not -path '*/build/*' | head -n 1)"
           if [ -z "$SETTINGS_FILE" ]; then
             echo "ERROR: Gradle settings file not found."
-            find . -maxdepth 5 -type f | sort
+            find . -maxdepth 6 -type f | sort
             exit 1
           fi
-
-          PROJECT_DIR=$(dirname "$SETTINGS_FILE")
-
+          PROJECT_DIR="$(dirname "$SETTINGS_FILE")"
           echo "project_dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
-          echo "Gradle project: $PROJECT_DIR"
+          echo "Gradle project found at: $PROJECT_DIR"
           ls -la "$PROJECT_DIR"
 
       - name: Check Android manifest
         shell: bash
         run: |
-          echo "Repository directory:"
-          pwd
-
-          echo "Searching for AndroidManifest.xml:"
-          find . -type f -iname "AndroidManifest.xml" \
-            -not -path '*/build/*' -print
-
+          set -e
           PROJECT_DIR="${{ steps.project.outputs.project_dir }}"
-          MANIFEST="$PROJECT_DIR/app/src/main/AndroidManifest.xml"
+          echo "Gradle project: $PROJECT_DIR"
+          echo "Searching for AndroidManifest.xml..."
+          find . -type f -iname "AndroidManifest.xml" -not -path '*/build/*' -print
 
+          MANIFEST="$PROJECT_DIR/app/src/main/AndroidManifest.xml"
           if [ ! -f "$MANIFEST" ]; then
             echo "ERROR: Expected manifest not found: $MANIFEST"
-            echo "Searching all repository files..."
-            find . -type f -iname "AndroidManifest.xml" -print
+            echo "Manifest files found in repository:"
+            find . -type f -iname "AndroidManifest.xml" -not -path '*/build/*' -print
             exit 1
           fi
 
