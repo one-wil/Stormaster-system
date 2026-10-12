@@ -1,0 +1,67 @@
+name: Build STOREMASTER APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Inspect Android project
+        shell: bash
+        run: |
+          set -eux
+          cd storemaster-apk
+
+          echo "Project files:"
+          ls -la
+          echo "App files:"
+          find app -maxdepth 5 -type f | sort
+
+          echo "Manifest files:"
+          find app -type f -iname "AndroidManifest.xml"
+
+          test -f settings.gradle || test -f settings.gradle.kts
+          test -f app/build.gradle || test -f app/build.gradle.kts
+
+          MANIFEST="$(find app -type f -iname "AndroidManifest.xml" | head -n 1)"
+          if [ -z "$MANIFEST" ]; then
+            echo "ERROR: AndroidManifest.xml is missing inside app."
+            exit 1
+          fi
+
+          echo "Manifest found: $MANIFEST"
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Build APK
+        shell: bash
+        run: |
+          cd storemaster-apk
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StoreMaster-APK
+          path: storemaster-apk/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
